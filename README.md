@@ -10,6 +10,85 @@ An end-to-end data engineering portfolio project demonstrating batch, streaming,
 *   **Storage & Analytics:** Google Cloud Storage, BigQuery, Bigtable (Optional)
 *   **Orchestration:** Cloud Workflows & Cloud Scheduler
 
+## Architecture Diagram
+
+```mermaid
+flowchart TB
+
+    subgraph SOURCES["Sources"]
+        PG[("Supabase\nPostgreSQL")]
+        PS_PUB["Pub/Sub\nOrder Events"]
+        CSV["Partner CSV\nUploads"]
+    end
+
+    subgraph BATCH["Batch Ingestion"]
+        DP["Dataproc Serverless\n(PySpark)"]
+    end
+
+    subgraph STREAM["Streaming Ingestion"]
+        DF["Dataflow\n(Apache Beam)"]
+        BT[("Bigtable\norders_recent\n(optional)")]
+    end
+
+    subgraph EVENT["Event-Driven Ingestion"]
+        EA["Eventarc Trigger"]
+        CF["Cloud Function Gen2\nprocess_csv"]
+    end
+
+    subgraph GCS["Cloud Storage"]
+        UP["raw/uploads/"]
+        REJ["raw/rejected/"]
+    end
+
+    subgraph BQ["BigQuery"]
+        direction TB
+        STG_B["staging.\nraw_orders_batch"]
+        STG_S["staging.\nraw_orders_streaming"]
+        STG_U["staging.\nraw_orders_uploads"]
+        CUR["curated.\nall_orders"]
+        MART["marts.\n(business-ready)"]
+    end
+
+    subgraph ORCH["Orchestration"]
+        WF["Cloud Workflows\ndaily_batch / temp_cleanup"]
+        SCH["Cloud Scheduler"]
+    end
+
+    subgraph SEC["Cross-Cutting"]
+        IAM["IAM\nshopstream-de-sa"]
+        KMS["Cloud KMS\n(CMEK)"]
+    end
+
+    PG -->|JDBC| DP
+    DP --> STG_B
+
+    PS_PUB --> DF
+    DF --> STG_S
+    DF --> BT
+
+    CSV --> UP
+    UP -->|object finalized| EA
+    EA --> CF
+    CF -->|valid rows| STG_U
+    CF -->|invalid files| REJ
+
+    STG_B --> CUR
+    STG_S --> CUR
+    STG_U --> CUR
+    CUR --> MART
+
+    SCH --> WF
+    WF -.->|triggers| DP
+    WF -.->|lists| GCS
+
+    IAM -.-> DP
+    IAM -.-> DF
+    IAM -.-> CF
+    IAM -.-> WF
+    KMS -.-> GCS
+    KMS -.-> BQ
+```
+
 ## Prerequisites
 
 1.  **Google Cloud Platform Account:** With an active billing account (or free trial).
