@@ -1,0 +1,16 @@
+main:
+  params: [args]
+  steps:
+    - list_objects:
+        call: googleapis.storage.v1.objects.list
+        args:
+          bucket: ${args.bucket}
+          prefix: "temp/"
+        result: objects
+    - initialize:
+        assign:
+          - deleted: 0
+    - finish:
+        return:
+          message: "Review temp objects and delete those older than 30 days."
+          listed_objects: ${objects.items}

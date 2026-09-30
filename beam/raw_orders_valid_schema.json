@@ -1,0 +1,67 @@
+[
+  {
+    "name": "order_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "customer_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "product_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "quantity",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "unit_price",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "order_total",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "order_status",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "region",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "created_at",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "updated_at",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "order_date",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "source",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ingested_at",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  }
+]

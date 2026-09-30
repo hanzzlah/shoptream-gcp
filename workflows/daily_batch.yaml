@@ -1,0 +1,31 @@
+main:
+  params: [args]
+  steps:
+    - submit_batch:
+        call: http.post
+        args:
+          url: ${"https://dataproc.googleapis.com/v1/projects/" + args.project_id + "/locations/" + args.region + "/batches"}
+          query:
+            batchId: ${"shopstream-daily-" + string(int(sys.now()))}
+          auth:
+            type: OAuth2
+          body:
+            pysparkBatch:
+              mainPythonFileUri: ${"gs://" + args.bucket + "/spark/batch_orders.py"}
+              jarFileUris:
+                - ${"gs://" + args.bucket + "/spark/postgresql-42.7.7.jar"}
+              args:
+                - ${"--jdbc-url=" + args.jdbc_url}
+                - ${"--jdbc-user=" + args.jdbc_user}
+                - ${"--jdbc-password=" + args.jdbc_password}
+                - ${"--target-project=" + args.project_id}
+                - "--target-dataset=shopstream_staging"
+                - "--target-table=raw_orders_batch"
+            runtimeConfig:
+              version: "2.2"
+            environmentConfig:
+              executionConfig:
+                serviceAccount: ${args.service_account}
+                stagingBucket: ${args.bucket}
+    - return_result:
+        return: "Dataproc Serverless batch submitted"

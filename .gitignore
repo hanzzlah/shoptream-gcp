@@ -1,0 +1,5 @@
+env.bat
+.venv
+.venv-w
+.env
+third_party/
